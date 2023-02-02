@@ -1,8 +1,8 @@
 package com.laingard.FrelloManager.security.services;
 
 
-import com.laingard.FrelloManager.models.User;
-import com.laingard.FrelloManager.repositories.UserRepository;
+import com.laingard.FrelloManager.model.User;
+import com.laingard.FrelloManager.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,14 +14,15 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService{
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository
+                .findOneByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        return UserDetailsImpl.build(user);
+        return new UserDetailsImpl(user);
     }
 
 }
