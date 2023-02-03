@@ -1,11 +1,8 @@
-package com.laingard.FrelloManager.models;
+package com.laingard.FrelloManager.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "users",
@@ -25,17 +22,17 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public User() {
     }
 
-    public User(String username, String password, Role role) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.role = role;
     }
 
     public Long getId() {
@@ -59,11 +56,11 @@ public class User {
         this.password = password;
     }
 
-    public Role getRoles() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRoles(Role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

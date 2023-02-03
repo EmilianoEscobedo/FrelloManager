@@ -1,4 +1,4 @@
-package com.laingard.FrelloManager.models;
+package com.laingard.FrelloManager.model;
 
 public enum EState {
     ADMISION,

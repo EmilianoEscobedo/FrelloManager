@@ -1,4 +1,4 @@
-package com.laingard.FrelloManager.models;
+package com.laingard.FrelloManager.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

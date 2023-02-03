@@ -1,6 +1,6 @@
-package com.laingard.FrelloManager.repositories;
+package com.laingard.FrelloManager.repository;
 
-import com.laingard.FrelloManager.models.Sales;
+import com.laingard.FrelloManager.model.Sales;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
