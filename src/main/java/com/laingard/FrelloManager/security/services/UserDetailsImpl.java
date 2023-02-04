@@ -1,10 +1,7 @@
 package com.laingard.FrelloManager.security.services;
 
-import com.laingard.FrelloManager.model.ERole;
-import com.laingard.FrelloManager.model.Role;
 import com.laingard.FrelloManager.model.User;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
