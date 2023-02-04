@@ -39,10 +39,11 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain (HttpSecurity http, AuthenticationManager authManager) throws Exception {
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
+        jwtAuthenticationFilter.setFilterProcessesUrl("/users/auth");
+
         return http.csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/users/signup").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling()
@@ -80,10 +81,8 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 }
