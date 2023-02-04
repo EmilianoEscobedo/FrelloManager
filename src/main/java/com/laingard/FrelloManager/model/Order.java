@@ -1,5 +1,6 @@
 package com.laingard.FrelloManager.model;
 
+import com.laingard.FrelloManager.enumeration.EState;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

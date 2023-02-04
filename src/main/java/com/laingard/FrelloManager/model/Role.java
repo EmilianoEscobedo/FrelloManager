@@ -1,5 +1,6 @@
 package com.laingard.FrelloManager.model;
 
+import com.laingard.FrelloManager.enumeration.ERole;
 import jakarta.persistence.*;
 
 @Entity
