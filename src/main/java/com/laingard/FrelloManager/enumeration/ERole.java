@@ -1,4 +1,4 @@
-package com.laingard.FrelloManager.model;
+package com.laingard.FrelloManager.enumeration;
 
 public enum ERole {
     ROLE_ADMIN,
