@@ -3,8 +3,8 @@ package com.laingard.FrelloManager.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-public class UsernameAlreadyExistsException extends ResponseStatusException {
-    public UsernameAlreadyExistsException(String message) {
+public class AlreadyExistsException extends ResponseStatusException {
+    public AlreadyExistsException(String message) {
         super(HttpStatus.CONFLICT, message);
     }
 
