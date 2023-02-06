@@ -16,17 +16,13 @@ public class Product {
     @NotBlank
     @Size(max = 30)
     private String name;
-    @NotBlank
-    @Size(max = 10)
     private Double quantity;
-    @NotBlank
-    @Size(max = 10)
-    private Double price;
+    private Integer price;
 
     public Product() {
     }
 
-    public Product(String name, Double quantity, Double price) {
+    public Product(String name, Double quantity, Integer price) {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
@@ -52,11 +48,11 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 }
