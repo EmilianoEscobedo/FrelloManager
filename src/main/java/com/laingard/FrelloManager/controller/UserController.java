@@ -4,7 +4,6 @@ import com.laingard.FrelloManager.dto.MessageResponse;
 import com.laingard.FrelloManager.dto.RoleDto;
 import com.laingard.FrelloManager.dto.UserDto;
 import com.laingard.FrelloManager.model.User;
-import com.laingard.FrelloManager.service.RoleService;
 import com.laingard.FrelloManager.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
-    @Autowired
-    RoleService roleService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserDto signUpRequest) {
@@ -30,29 +27,29 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/changerole")
-    public ResponseEntity<MessageResponse> changeRole (@RequestBody RoleDto request){
-        roleService.changeRole(request);
+    @PutMapping("/updaterole/{id}")
+    public ResponseEntity<?> changeRole (@RequestBody RoleDto request,
+                                         @PathVariable Long id){
+        userService.updateRole(request, id);
         return ResponseEntity.ok(new MessageResponse("Role assigned successfully"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
-    public List<User> getAll(){
+    public List<UserDto> getAll(){
         return userService.findAll();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("{name}")
-    public User getOne(@PathVariable("name") String name){
-        return userService.findOne(name);
+    @GetMapping("{id}")
+    public UserDto getOne(@PathVariable("id") Long id){
+        return userService.findOne(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("{name}")
-    public ResponseEntity<MessageResponse> deleteOne (@PathVariable("name") String name){
-        userService.deleteOne(name);
-        return ResponseEntity.ok(new MessageResponse("user " + name + " has been successfully deleted"));
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteOne (@PathVariable("id") Long id){
+        userService.deleteOne(id);
+        return ResponseEntity.ok(new MessageResponse("user ID" + id + " has been successfully deleted"));
     }
-
 }
