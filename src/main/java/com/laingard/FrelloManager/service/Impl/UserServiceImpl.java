@@ -1,6 +1,7 @@
 package com.laingard.FrelloManager.service.Impl;
 
 import com.laingard.FrelloManager.dto.RoleDto;
+import com.laingard.FrelloManager.dto.SignUpDto;
 import com.laingard.FrelloManager.dto.UserDto;
 import com.laingard.FrelloManager.exception.AlreadyExistsException;
 import com.laingard.FrelloManager.exception.CantBeEmptyException;
@@ -13,12 +14,11 @@ import com.laingard.FrelloManager.model.User;
 import com.laingard.FrelloManager.repository.RoleRepository;
 import com.laingard.FrelloManager.repository.UserRepository;
 import com.laingard.FrelloManager.service.UserService;
-import jakarta.persistence.Id;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service(value = "userService")
@@ -34,8 +34,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
+    @Transactional
     @Override
-    public User save(UserDto user) {
+    public User save(SignUpDto user) {
         if (userRepository.existsByUsername(user.getUsername().toLowerCase())) {
             throw new AlreadyExistsException("Error: Username already exist");
         }
@@ -51,10 +52,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User updateRole(RoleDto request, Long id) {
-        if (userRepository.findOneById(id).isEmpty()) {
-            throw new NotFoundException("Error: User not found");
-        }
-        User user = userRepository.findOneById(id).get();
+        User user = userRepository.findOneById(id).
+                orElseThrow(()-> new NotFoundException("Error: User not found"));
         switch (request.getRole()) {
             case "user" -> {
                 Role userRole = roleRepository.findByName(ERole.ROLE_USER)
@@ -85,31 +84,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        List<User> list = new ArrayList<>();
         return userMapper.toDtoList(userRepository.findAll());
     }
 
     @Override
     public UserDto findOne(Long id) {
-        if (userRepository.findOneById(id).isEmpty()) {
-            throw new NotFoundException("Error: User not found");
-        }
-        return userMapper.toDto(userRepository.findOneById(id).get());
+        User user = userRepository.findOneById(id).
+                orElseThrow(()-> new NotFoundException("Error: User not found"));
+        return userMapper.toDto(user);
     }
 
+    @Transactional
     @Override
     public void deleteOne(Long id){
-        if (userRepository.findOneById(id).isEmpty()) {
-            throw new NotFoundException("Error: User not found");
-        }
-        if (userRepository.findOneById(id).get()
+        User user = userRepository.findOneById(id).
+                orElseThrow(()-> new NotFoundException("Error: User not found"));
+        if (user
                 .getRole()
                 .getName()
                 .name()
                 .equals("ROLE_ADMIN")) {
             throw new ForbbidenException("Error: Cant delete admin user");
         }
-        User user = userRepository.findOneById(id).get();
         userRepository.deleteById(user.getId());
     }
 }
