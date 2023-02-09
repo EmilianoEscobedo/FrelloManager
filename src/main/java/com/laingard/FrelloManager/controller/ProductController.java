@@ -2,7 +2,6 @@ package com.laingard.FrelloManager.controller;
 
 import com.laingard.FrelloManager.dto.MessageResponse;
 import com.laingard.FrelloManager.dto.ProductDto;
-import com.laingard.FrelloManager.model.Product;
 import com.laingard.FrelloManager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
     @PreAuthorize("hasRole('ADMIN') or hasRole('SALES')")
-    @PostMapping("/save")
+    @PostMapping()
     public ResponseEntity<?> save(@RequestBody ProductDto newProduct) {
         productService.save(newProduct);
         return ResponseEntity.ok(new MessageResponse("Product saved successfully"));
