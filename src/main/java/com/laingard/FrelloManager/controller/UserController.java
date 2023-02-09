@@ -2,8 +2,8 @@ package com.laingard.FrelloManager.controller;
 
 import com.laingard.FrelloManager.dto.MessageResponse;
 import com.laingard.FrelloManager.dto.RoleDto;
+import com.laingard.FrelloManager.dto.SignUpDto;
 import com.laingard.FrelloManager.dto.UserDto;
-import com.laingard.FrelloManager.model.User;
 import com.laingard.FrelloManager.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +21,14 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDto signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpDto signUpRequest) {
         userService.save(signUpRequest);
         return ResponseEntity.ok(new MessageResponse("User successfully registered"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/updaterole/{id}")
-    public ResponseEntity<?> changeRole (@RequestBody RoleDto request,
+    @PutMapping("{id}/role")
+    public ResponseEntity<?> updateRole(@RequestBody RoleDto request,
                                          @PathVariable Long id){
         userService.updateRole(request, id);
         return ResponseEntity.ok(new MessageResponse("Role assigned successfully"));
