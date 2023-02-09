@@ -8,6 +8,7 @@ import com.laingard.FrelloManager.mapper.ProductMapper;
 import com.laingard.FrelloManager.model.Product;
 import com.laingard.FrelloManager.repository.ProductRepository;
 import com.laingard.FrelloManager.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductMapper productMapper;
 
+    @Transactional
     @Override
     public Product save(ProductDto product) {
         if (productRepository.existsByName(product.getName().toLowerCase()))
@@ -30,10 +32,7 @@ public class ProductServiceImpl implements ProductService {
             throw new CantBeEmptyException("Error: Product name cant be empty");
         if (product.getPrice() == null || product.getPrice() == 0)
             throw new CantBeEmptyException("Error: Product price cant be zero");
-        Product nProduct = new Product(product.getName(),
-                product.getQuantity(),
-                product.getPrice());
-        return productRepository.save(nProduct);
+        return productRepository.save(productMapper.toEntity(product));
     }
 
     @Override
@@ -43,24 +42,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto findOne(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Product not found")
+        Product product = productRepository.findById(id).
+                orElseThrow(() -> new NotFoundException("Product not found")
         );
         return productMapper.toDto(product);
     }
 
+    @Transactional
     @Override
     public void deleteOne(Long id) {
-        if(!productRepository.existsById(id))
-            throw new NotFoundException("Product not found");
+        Product product = productRepository.findById(id).
+                orElseThrow(()-> new NotFoundException("Product not found"));
         productRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public Product update(ProductDto request, Long id, String attribute) {
-        if(!productRepository.existsById(id))
-            throw new NotFoundException("Product not found");
-        Product product = productRepository.findById(id).get();
+        Product product = productRepository.findById(id).
+                orElseThrow(()-> new NotFoundException("Product not found"));
         switch (attribute){
             case "name" -> {
                 if (request.getName() == null || request.getName().equals(""))
