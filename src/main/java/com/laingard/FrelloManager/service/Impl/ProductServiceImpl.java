@@ -25,19 +25,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Product save(ProductDto product) {
+    public ProductDto save(ProductDto product) {
         if (productRepository.existsByName(product.getName().toLowerCase()))
             throw new AlreadyExistsException("Error: Product already exist");
         if (product.getName() == null || product.getName().equals(""))
             throw new CantBeEmptyException("Error: Product name cant be empty");
         if (product.getPrice() == null || product.getPrice() == 0)
             throw new CantBeEmptyException("Error: Product price cant be zero");
-        return productRepository.save(productMapper.toEntity(product));
+        Product nProduct = productMapper.toEntity(product);
+        productRepository.save(nProduct);
+        return productMapper.toDto(nProduct);
     }
 
     @Override
     public List<ProductDto> findAll() {
         return productMapper.toDtoList(productRepository.findAll());
+    }
+
+    @Override
+    public List<ProductDto> filterByAvailable() {
+        return productMapper.toDtoList(productRepository.filterByAvailable());
+
     }
 
     @Override
@@ -58,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public Product update(ProductDto request, Long id, String attribute) {
+    public ProductDto update(ProductDto request, Long id, String attribute) {
         Product product = productRepository.findById(id).
                 orElseThrow(()-> new NotFoundException("Product not found"));
         switch (attribute){
@@ -81,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
                 throw new NotFoundException("Error: Attribute not found");
             }
         }
-        return productRepository.save(product);
+        productRepository.save(product);
+        return productMapper.toDto(product);
     }
 }
