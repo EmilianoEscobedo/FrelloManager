@@ -45,6 +45,7 @@ public interface OrderMapper {
         return order.getProducts().stream().map(product -> {
             OrderProductDto dto = new OrderProductDto();
             dto.setId(product.getProduct().getId());
+            dto.setName(product.getProduct().getName());
             dto.setQuantity(product.getQuantity());
             return dto;
         }).collect(Collectors.toList());
