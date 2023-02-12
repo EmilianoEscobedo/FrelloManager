@@ -23,11 +23,15 @@ public class OrderProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Column(name = "name")
+    private String name;
+
     private Double quantity;
 
     public OrderProduct(Order order, Product product, double quantity) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
+        this.name = product.getName();
     }
 }
