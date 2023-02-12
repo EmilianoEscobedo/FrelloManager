@@ -39,11 +39,12 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain (HttpSecurity http, AuthenticationManager authManager) throws Exception {
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/users/auth");
+        jwtAuthenticationFilter.setFilterProcessesUrl("/auth");
 
         return http.csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/signup").permitAll()
+                        .requestMatchers("/users").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling()
