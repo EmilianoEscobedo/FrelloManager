@@ -1,19 +1,19 @@
 package com.laingard.FrelloManager.service;
 
+import com.laingard.FrelloManager.dto.FilteredOrderDto;
 import com.laingard.FrelloManager.dto.OrderDto;
-import com.laingard.FrelloManager.dto.ProductDto;
 import com.laingard.FrelloManager.model.Order;
-import com.laingard.FrelloManager.model.Product;
 
 import java.util.List;
 
 public interface OrderService {
-    Order save(OrderDto order);
+    OrderDto save(OrderDto order);
     List<OrderDto> findAll();
+    FilteredOrderDto findByDate(String state, String from, String to);
     OrderDto findOne(Long id);
     void deleteOne(Long id);
-    Order update(OrderDto request, Long id, String attribute);
-    void toDelivery(Long id);
-    void toSalesBook(Long id);
-    void delivered(Long id);
+    OrderDto update(OrderDto request, Long id, String attribute);
+    OrderDto toDelivery(Long id);
+    OrderDto toSalesBook(Long id);
+    OrderDto delivered(Long id);
 }

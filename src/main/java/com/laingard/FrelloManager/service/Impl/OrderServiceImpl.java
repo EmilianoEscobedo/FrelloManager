@@ -2,25 +2,30 @@ package com.laingard.FrelloManager.service.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.laingard.FrelloManager.dto.FilteredOrderDto;
 import com.laingard.FrelloManager.dto.OrderDto;
 import com.laingard.FrelloManager.dto.OrderProductDto;
 import com.laingard.FrelloManager.enumeration.EState;
 import com.laingard.FrelloManager.exception.CantBeEmptyException;
 import com.laingard.FrelloManager.exception.NotFoundException;
+import com.laingard.FrelloManager.exception.StatusProblemException;
 import com.laingard.FrelloManager.mapper.OrderMapper;
 import com.laingard.FrelloManager.model.*;
 import com.laingard.FrelloManager.repository.OrderRepository;
 import com.laingard.FrelloManager.repository.ProductRepository;
 import com.laingard.FrelloManager.repository.StateRepository;
 import com.laingard.FrelloManager.service.OrderService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,21 +43,59 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private StateRepository stateRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     @Override
-    public Order save(OrderDto order) {
+    public OrderDto save(OrderDto order) {
         Order nOrder = orderMapper.toEntity(order);
         State orderState = stateRepository.findByName(EState.COOKING)
                 .orElseThrow(() -> new RuntimeException("Error: State is not found"));
         nOrder.setState(orderState);
         processProductList(order, nOrder);
-        return orderRepository.save(nOrder);
+        orderRepository.save(nOrder);
+        return orderMapper.toDto(nOrder);
     }
 
     @Override
     public List<OrderDto> findAll() {
         return orderMapper.toDtoList(orderRepository.findAll());
     }
+
+    @Override
+    public FilteredOrderDto findByDate(String state, String from, String to){
+        Map<String, EState> stateMap = Map.of(
+                "cooking", EState.COOKING,
+                "delivery", EState.DELIVERY,
+                "delivered", EState.DELIVERED,
+                "payed", EState.PAYED,
+                "canceled", EState.CANCELED
+        );
+        EState eState = stateMap.get(state);
+        if (eState == null) {
+            throw new NotFoundException("Error: state don't exist");
+        }
+        State stateInRepo = stateRepository.findByName(eState)
+                .orElseThrow(() -> new RuntimeException("Error: State is not found"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
+        LocalDate startParsedDate = LocalDate.parse(from, formatter);
+        LocalDate endParsedDate = LocalDate.parse(to, formatter);
+        List<Order> orders = entityManager.createQuery("SELECT o FROM Order o WHERE o.timeStamp >= :startDate AND o.timeStamp <= :endDate AND o.state = :state", Order.class)
+                .setParameter("startDate", startParsedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toString())
+                .setParameter("endDate", endParsedDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toString())
+                .setParameter("state", stateInRepo)
+                .getResultList();
+        int totalOrders = orders.size();
+        double totalPrice = orders.stream().mapToDouble(Order::getTotalPrice).sum();
+        FilteredOrderDto result = new FilteredOrderDto();
+        result.setOrders(orderMapper.toDtoList(orders));
+        result.setTotalOrders(totalOrders);
+        result.setTotalMoney(totalPrice);
+        return result;
+    }
+
 
     @Override
     public OrderDto findOne(Long id) {
@@ -74,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order update(OrderDto request, Long id, String attribute) {
+    public OrderDto update(OrderDto request, Long id, String attribute) {
         Order order = orderRepository.findById(id).orElseThrow(
                 () -> (new NotFoundException("Error: Order id does not exist")));
         switch (attribute){
@@ -102,33 +145,46 @@ public class OrderServiceImpl implements OrderService {
                 throw new NotFoundException("Error: Attribute not found");
             }
         }
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        return orderMapper.toDto(order);
     }
 
     @Transactional
     @Override
-    public void toDelivery(Long id) {
+    public OrderDto toDelivery(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(
                 () -> (new NotFoundException("Error: Order id does not exist")));
         State orderState = stateRepository.findByName(EState.DELIVERY)
                 .orElseThrow(() -> new RuntimeException("Error: State is not found"));
         order.setState(orderState);
         orderRepository.save(order);
-    }
-
-    @Override
-    public void toSalesBook(Long id) {
+        return orderMapper.toDto(order);
     }
 
     @Transactional
     @Override
-    public void delivered(Long id) {
+    public OrderDto toSalesBook(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(
+                () -> (new NotFoundException("Error: Order id does not exist")));
+        if (order.getState().getName().toString().equals("DELIVERED"))
+            throw new StatusProblemException("Error: Order has not been delivered yet");
+        State orderState = stateRepository.findByName(EState.PAYED)
+                .orElseThrow(() -> new RuntimeException("Error: State is not found"));
+        order.setState(orderState);
+        orderRepository.save(order);
+        return orderMapper.toDto(order);
+    }
+
+    @Transactional
+    @Override
+    public OrderDto delivered(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(
                 () -> (new NotFoundException("Error: Order id does not exist")));
         State orderState = stateRepository.findByName(EState.DELIVERED)
                 .orElseThrow(() -> new RuntimeException("Error: State is not found"));
         order.setState(orderState);
         orderRepository.save(order);
+        return orderMapper.toDto(order);
     }
 
     @Transactional
@@ -178,6 +234,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     private void updateStock(long productId, double quantity) {
         Product productInStock = productRepository.findById(productId).orElse(null);
+        assert productInStock != null;
         productInStock.setQuantity(productInStock.getQuantity() + quantity);
         if (productInStock.getQuantity() < 0)
             throw new NotFoundException("Error: Not enough stock of " + productInStock.getName() + " (id " + productInStock.getId() + ")");
