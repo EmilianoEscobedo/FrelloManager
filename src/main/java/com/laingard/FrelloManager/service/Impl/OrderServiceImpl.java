@@ -82,11 +82,10 @@ public class OrderServiceImpl implements OrderService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         LocalDate startParsedDate = LocalDate.parse(from, formatter);
         LocalDate endParsedDate = LocalDate.parse(to, formatter);
-        List<Order> orders = entityManager.createQuery("SELECT o FROM Order o WHERE o.timeStamp >= :startDate AND o.timeStamp <= :endDate AND o.state = :state", Order.class)
-                .setParameter("startDate", startParsedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toString())
-                .setParameter("endDate", endParsedDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toString())
-                .setParameter("state", stateInRepo)
-                .getResultList();
+        List<Order> orders = orderRepository.filterByDateState(
+                startParsedDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                endParsedDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant(),
+                stateInRepo);
         int totalOrders = orders.size();
         double totalPrice = orders.stream().mapToDouble(Order::getTotalPrice).sum();
         FilteredOrderDto result = new FilteredOrderDto();
