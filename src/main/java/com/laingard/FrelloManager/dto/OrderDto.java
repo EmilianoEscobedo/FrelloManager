@@ -13,7 +13,7 @@ public class OrderDto {
     private List<OrderProductDto> products;
     private String timeStamp;
     private Double totalPrice;
-    private EState state;
+    private String state;
     private String clientName;
     private String clientPhone;
     private String clientAddress;

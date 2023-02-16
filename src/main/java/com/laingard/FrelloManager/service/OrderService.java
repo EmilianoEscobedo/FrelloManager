@@ -13,7 +13,4 @@ public interface OrderService {
     OrderDto findOne(Long id);
     void deleteOne(Long id);
     OrderDto update(OrderDto request, Long id, String attribute);
-    OrderDto toDelivery(Long id);
-    OrderDto toSalesBook(Long id);
-    OrderDto delivered(Long id);
 }

@@ -69,7 +69,7 @@ public class OrderController {
             @ApiResponse(responseCode = "403", description = "Error: Access Denied",
                     content = @Content)})
     @PreAuthorize("hasRole('SALES') or hasRole('ADMIN')")
-    @GetMapping("/")
+    @GetMapping("/where")
     public FilteredOrderDto filterOrder(@Parameter(description = "State of the orders to filter")
                                             @RequestParam String state,
                                         @Parameter(description = "Initial date of the orders to filter")
@@ -142,60 +142,5 @@ public class OrderController {
                                            @PathVariable Long id) {
         orderService.deleteOne(id);
         return ResponseEntity.ok(new MessageResponse("Order deleted successfully"));
-    }
-
-    @Operation(summary = "Send order to delivery")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Order sent to delivery",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OrderDto.class)) }),
-            @ApiResponse(responseCode = "401", description = "Error: Authorization Required",
-                    content = @Content),
-            @ApiResponse(responseCode = "403", description = "Error: Access Denied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Error: Order not found",
-                    content = @Content)})
-    @PreAuthorize("hasRole('KITCHEN') or hasRole('ADMIN')")
-    @PutMapping("toDelivery/{id}")
-    public OrderDto toDelivery(@Parameter(description = "id of the order to be sent to delivery")
-                                   @PathVariable Long id){
-        return orderService.toDelivery(id);
-    }
-
-    @Operation(summary = "Mark order as delivered")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Order marked as delivered successfully",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OrderDto.class)) }),
-            @ApiResponse(responseCode = "401", description = "Error: Authorization Required",
-                    content = @Content),
-            @ApiResponse(responseCode = "403", description = "Error: Access Denied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Error: Order not found",
-                    content = @Content)})
-    @PreAuthorize("hasRole('DELIVERY') or hasRole('SALES') or hasRole('ADMIN')")
-    @PutMapping("delivered/{id}")
-    public OrderDto delivered(@Parameter(description = "id of the order to marked as delivered")
-            @PathVariable Long id) {
-        return orderService.delivered(id);
-    }
-
-
-    @Operation(summary = "Mark order as payed")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Order marked as payed successfully",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OrderDto.class)) }),
-            @ApiResponse(responseCode = "401", description = "Error: Authorization Required",
-                    content = @Content),
-            @ApiResponse(responseCode = "403", description = "Error: Access Denied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Error: Order not found",
-                    content = @Content)})
-    @PreAuthorize("hasRole('SALES') or hasRole('ADMIN')")
-    @PutMapping("payed/{id}")
-    public OrderDto payed(@Parameter(description = "id of the order to marked as payed")
-                              @PathVariable Long id) {
-        return orderService.toSalesBook(id);
     }
 }

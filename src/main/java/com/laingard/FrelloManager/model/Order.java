@@ -11,6 +11,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 @Getter
@@ -35,10 +37,9 @@ public class Order {
     private String clientName;
     private String clientPhone;
     private String clientAddress;
-
     @PrePersist
     protected void onCreate() {
-        this.timeStamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        this.timeStamp = ZonedDateTime.now(ZoneId.of("GMT-3")).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
 

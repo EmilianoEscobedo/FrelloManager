@@ -2,7 +2,10 @@ package com.laingard.FrelloManager.mapper;
 
 import com.laingard.FrelloManager.dto.OrderDto;
 import com.laingard.FrelloManager.dto.OrderProductDto;
+import com.laingard.FrelloManager.enumeration.EState;
+import com.laingard.FrelloManager.exception.NotFoundException;
 import com.laingard.FrelloManager.model.Order;
+import com.laingard.FrelloManager.model.State;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -20,7 +24,7 @@ public interface OrderMapper {
 
     @Mapping(target = "products", expression = "java(mapProducts(order))")
     @Mapping(target = "timeStamp", qualifiedByName = "formatDate")
-    @Mapping(target = "state", expression = "java(order.getState().getName())")
+    @Mapping(target = "state", expression = "java(order.getState().getName().name())")
     OrderDto toDto(Order order);
 
     @Mapping(target = "totalPrice", ignore = true)
@@ -51,4 +55,14 @@ public interface OrderMapper {
         }).collect(Collectors.toList());
     }
 
+    default EState stateToEState(String state){
+        Map<String, EState> stateMap = Map.of(
+                "cooking", EState.COOKING,
+                "delivery", EState.DELIVERY,
+                "delivered", EState.DELIVERED,
+                "payed", EState.PAYED,
+                "canceled", EState.CANCELED
+        );
+        return stateMap.get(state);
+    }
 }
