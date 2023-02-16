@@ -52,10 +52,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(nUser);
         return userMapper.toDto(nUser);
     }
+    @Transactional
     @Override
     public UserDto updateRole(String RequestRole, Long id) {
         User user = userRepository.findOneById(id).
                 orElseThrow(()-> new NotFoundException("Error: User not found"));
+        if (user.getRole().equals(roleRepository.findByName(ERole.ROLE_ADMIN).get()))
+            throw new ForbbidenException("Error: Cant change admin role");
         Map<String, ERole> roleMap = Map.of(
         "user", ERole.ROLE_USER,
         "sales", ERole.ROLE_SALES,
@@ -90,13 +93,8 @@ public class UserServiceImpl implements UserService {
     public void deleteOne(Long id){
         User user = userRepository.findOneById(id).
                 orElseThrow(()-> new NotFoundException("Error: User not found"));
-        if (user
-                .getRole()
-                .getName()
-                .name()
-                .equals("ROLE_ADMIN")) {
-            throw new ForbbidenException("Error: Cant delete admin user");
-        }
+        if (user.getRole().equals(roleRepository.findByName(ERole.ROLE_ADMIN).get()))
+            throw new ForbbidenException("Error: Cant delete admin role");
         userRepository.deleteById(user.getId());
     }
 }
