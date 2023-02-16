@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
@@ -40,7 +39,7 @@ public class WebSecurityConfig {
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/auth");
-
+//        http.requiresChannel().anyRequest().requiresSecure(); -> to redirect HTTPS requests on production
         return http.csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/users").permitAll()
