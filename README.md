@@ -2,7 +2,7 @@
 Management system to control end to end the work process in a fast food restaurant, Frello Rico y Casero, in the city of La Plata, Argentina.
 <br>
 This repository contains the back-end part of the project, which consists of a REST api developed in java with Spring.<br><br>
-You can look at the Documentation <a href="https://api.frellomanager.online/swagger-ui/index.html#/">here</a> 
+You can look at the documentation <a href="https://api.frellomanager.online/swagger-ui/index.html#/">here</a> 
 <br><br>
 ## :wrench: Project Setup and Tools
 * <a href="https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html">JDK 19</a> 
