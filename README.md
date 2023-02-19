@@ -1,7 +1,7 @@
 # :cook: Frello Manager REST API
 Management system to control end to end the work process in a fast food restaurant, Frello Rico y Casero, in the city of La Plata, Argentina.
 <br>
-This repository contains the back-end part of the project, which consists of a REST api developed in java with Spring.<br><br>
+This repository contains the back-end part of the project, which consists of a REST API developed in java with Spring.<br><br>
 You can look at the <a href="https://api.frellomanager.online/swagger-ui/index.html#/">endpoints documentation</a> 
 and also you can view a <a href="https://www.youtube.com/watch?v=GSdKzLrq3Ds/">demo of the proyect</a>.
 <br><br>
