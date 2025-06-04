@@ -8,8 +8,19 @@ and also you can view a <a href="https://www.youtube.com/watch?v=GSdKzLrq3Ds/">d
 ## :wrench: Project Setup and Tools
 * <a href="https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html">JDK 19</a> 
 * <a href="https://www.postgresql.org/">PostgreSql</a> 
-* <a href="https://www.postman.com/">Postman</a> 
+* <a href="https://www.postman.com/">Postman</a>
+* <a href="https://https://docs.docker.com/get-docker/">Docker</a>
+* <a href="https://docs.docker.com/compose/">Docker compose</a>
 <br><br>
+## :green_circle: Run Locally using Docker
+1 - Install [Docker](https://https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)<br>
+2 - Clone this repo and move into the downloaded folder<br>
+3 - Run the command  **`docker-compose -f deploy/docker-compose.yml up`**<br>
+4. The `docker-compose.yml` file located in the `deploy` folder will handle starting two services:
+   - **db:** a PostgreSQL container, configured to expose port 5432 on your host.
+   - **app:** the Spring Boot application, which is built automatically using the `Dockerfile` in the `deploy` folder. The build process uses a Maven image to compile the source code and package the project, then runs the resulting JAR in a lightweight Java container using a JDK image.
+5. Once started, the application will be available at [http://localhost:8080](http://localhost:8080).
+
 ## :building_construction: How it Works
 It is a REST API that exposes a series of endpoints from which, through HTTPS requests, information concerning Frello's work process can be accessed and manipulated. The architecture of the solution is designed for the entry of a new order, its preparation in the kitchen, its dispatch by delivery or take away and its subsequent balance saved in the sales ledger. <br>
 ### Security
@@ -28,8 +39,6 @@ The application is documented by means of Swagger and OpenApi, where the resourc
 With the incorporation of Junit, all endpoints and service functionalities are tested in unit tests.
 <br>
 <br><br>
-## :green_circle: Run Locally
-On the root folder run:
 ```
 mvn spring-boot:run
 ```
