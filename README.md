@@ -10,7 +10,7 @@ and also you can view a <a href="https://www.youtube.com/watch?v=GSdKzLrq3Ds/">d
 * <a href="https://www.postgresql.org/">PostgreSql</a> 
 * <a href="https://www.postman.com/">Postman</a>
 * <a href="https://https://docs.docker.com/get-docker/">Docker</a>
-* <a href="https://docs.docker.com/compose/">Docker compose</a>
+* <a href="https://docs.docker.com/compose/">Docke-compose</a>
 <br><br>
 ## :green_circle: Run Locally using Docker
 1 - Install [Docker](https://https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)<br>
@@ -39,6 +39,3 @@ The application is documented by means of Swagger and OpenApi, where the resourc
 With the incorporation of Junit, all endpoints and service functionalities are tested in unit tests.
 <br>
 <br><br>
-```
-mvn spring-boot:run
-```
